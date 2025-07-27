@@ -1,98 +1,301 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Demo Application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API built with NestJS, TypeORM, and PostgreSQL for managing tasks and books.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- Task management with CRUD operations
+- Task status tracking (PENDING, IN_PROGRESS, DONE)
+- PostgreSQL database integration
+- TypeORM for database operations
+- Input validation and error handling
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Project setup
+- Node.js (v16 or higher)
+- PostgreSQL database
+- npm or yarn
+
+## Installation
 
 ```bash
-$ npm install
+# Clone the repository
+git clone <repository-url>
+
+# Navigate to project directory
+cd demo-1
+
+# Install dependencies
+npm install
+
+# Start the application in development mode
+npm run start:dev
 ```
 
-## Compile and run the project
+## Environment Setup
+
+The application connects to a PostgreSQL database. Update the database configuration in `src/app.module.ts` if needed.
+
+## API Documentation
+
+### Base URL
+```
+http://localhost:3000
+```
+
+## Tasks Endpoints
+
+### 1. Create a Task
+**POST** `/tasks`
+
+Creates a new task with PENDING status by default.
+
+**Request Body:**
+```json
+{
+  "title": "Complete project documentation",
+  "description": "Write comprehensive API documentation for the project"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": 1,
+  "title": "Complete project documentation",
+  "description": "Write comprehensive API documentation for the project",
+  "status": "PENDING"
+}
+```
+
+### 2. Get All Tasks
+**GET** `/tasks`
+
+Retrieves all tasks from the database.
+
+**Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "title": "Complete project documentation",
+    "description": "Write comprehensive API documentation for the project",
+    "status": "PENDING"
+  },
+  {
+    "id": 2,
+    "title": "Review code",
+    "description": "Perform code review for the new features",
+    "status": "IN_PROGRESS"
+  }
+]
+```
+
+### 3. Get Task by ID
+**GET** `/tasks/:id`
+
+Retrieves a specific task by its ID.
+
+**URL Parameters:**
+- `id` (number) - The task ID
+
+**Example:** `GET /tasks/1`
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "title": "Complete project documentation",
+  "description": "Write comprehensive API documentation for the project",
+  "status": "PENDING"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request** - Invalid ID format
+```json
+{
+  "statusCode": 400,
+  "message": "ID must be a valid positive number",
+  "error": "Bad Request"
+}
+```
+
+- **404 Not Found** - Task not found
+```json
+{
+  "statusCode": 404,
+  "message": "Task with ID 999 not found",
+  "error": "Not Found"
+}
+```
+
+### 4. Update Task Status
+**PATCH** `/tasks/:id/status`
+
+Updates the status of a specific task.
+
+**URL Parameters:**
+- `id` (number) - The task ID
+
+**Request Body:**
+```json
+{
+  "status": "IN_PROGRESS"
+}
+```
+
+**Valid Status Values:**
+- `PENDING`
+- `IN_PROGRESS`
+- `DONE`
+
+**Example:** `PATCH /tasks/1/status`
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "title": "Complete project documentation",
+  "description": "Write comprehensive API documentation for the project",
+  "status": "IN_PROGRESS"
+}
+```
+
+### 5. Delete Task
+**DELETE** `/tasks/:id`
+
+Deletes a specific task by its ID.
+
+**URL Parameters:**
+- `id` (number) - The task ID
+
+**Example:** `DELETE /tasks/1`
+
+**Response (200 OK):**
+```json
+{
+  "message": "Task with ID 1 deleted successfully"
+}
+```
+
+**Error Responses:**
+- **400 Bad Request** - Invalid ID format
+```json
+{
+  "statusCode": 400,
+  "message": "ID must be a valid positive number",
+  "error": "Bad Request"
+}
+```
+
+- **404 Not Found** - Task not found
+```json
+{
+  "statusCode": 404,
+  "message": "Task with ID 999 not found",
+  "error": "Not Found"
+}
+```
+
+## Task Status Enum
+
+The application uses the following status values:
+
+| Status | Description |
+|--------|-------------|
+| `PENDING` | Task is created but not started (default) |
+| `IN_PROGRESS` | Task is currently being worked on |
+| `DONE` | Task is completed |
+
+## Database Schema
+
+### Task Entity
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | number | Primary key, auto-generated |
+| `title` | string | Task title (required) |
+| `description` | string | Task description (required) |
+| `status` | TaskStatus | Task status (default: PENDING) |
+
+## Running the Application
 
 ```bash
-# development
-$ npm run start
+# Development mode
+npm run start:dev
 
-# watch mode
-$ npm run start:dev
+# Production mode
+npm run start:prod
 
-# production mode
-$ npm run start:prod
+# Debug mode
+npm run start:debug
 ```
 
-## Run tests
+## Testing
 
 ```bash
-# unit tests
-$ npm run test
+# Run unit tests
+npm run test
 
-# e2e tests
-$ npm run test:e2e
+# Run e2e tests
+npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# Run tests with coverage
+npm run test:cov
 ```
 
-## Deployment
+## Project Structure
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```
+src/
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+├── main.ts
+├── organizations/
+│   └── organizations.controller.ts
+└── tasks/
+    ├── task.entity.ts
+    ├── tasks.controller.ts
+    ├── tasks.module.ts
+    ├── tasks.service.ts
+    └── *.spec.ts (test files)
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Technologies Used
 
-## Resources
+- **NestJS** - Progressive Node.js framework
+- **TypeORM** - ORM for TypeScript and JavaScript
+- **PostgreSQL** - Relational database
+- **TypeScript** - Typed superset of JavaScript
+- **Jest** - Testing framework
 
-Check out a few resources that may come in handy when working with NestJS:
+## Error Handling
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+The API implements comprehensive error handling:
 
-## Support
+- **400 Bad Request** - Invalid input data or malformed requests
+- **404 Not Found** - Resource not found
+- **500 Internal Server Error** - Server-side errors
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+All error responses follow a consistent format:
+```json
+{
+  "statusCode": 400,
+  "message": "Descriptive error message",
+  "error": "Error Type"
+}
+```
 
-## Stay in touch
+## Contributing
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the UNLICENSED license.
