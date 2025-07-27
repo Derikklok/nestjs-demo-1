@@ -32,8 +32,7 @@ export class TasksService {
     return this.taskRepo.save(task);
   }
 
-  async remove(id:number):Promise<void>{
+  async remove(id: number): Promise<void> {
     await this.taskRepo.delete(id);
   }
-
 }

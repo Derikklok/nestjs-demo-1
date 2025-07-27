@@ -43,7 +43,10 @@ export class TasksController {
   }
 
   @Patch(':id/status')
-  updateStatus(@Param('id') id: string, @Body() body: { status: TaskStatus }): Promise<Task | null> {
+  updateStatus(
+    @Param('id') id: string,
+    @Body() body: { status: TaskStatus },
+  ): Promise<Task | null> {
     return this.taskService.updateStatus(+id, body.status);
   }
 
@@ -63,7 +66,7 @@ export class TasksController {
 
     // Delete the task
     await this.taskService.remove(numericId);
-    
+
     return { message: `Task with ID ${numericId} deleted successfully` };
   }
 }
